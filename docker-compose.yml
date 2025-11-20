@@ -1,0 +1,33 @@
+services:
+  backend:
+    build: ./backend
+    container_name: fitCycle-backend
+    restart: unless-stopped
+    env_file:
+      - ./.env
+    expose:
+      - "5000" # 只暴露給內部網路，不對外開 port
+
+  frontend:
+    build:
+      context: .                # ✅ 根目錄為 context
+      dockerfile: ./frontend/Dockerfile
+      args:
+        - VITE_APP_ENV=docker # 這裡要注入，不然docker compose up會吃不到env
+      #   - VITE_API_URL=/api
+      #   - VITE_API_URL_PROD=https://jwt-rtk-practice-backend.onrender.com
+    container_name: fitCycle-frontend
+    expose:
+      - "80"
+    depends_on:
+      - backend
+
+  nginx:
+    build: ./nginx
+    container_name: fitCycle-nginx
+    restart: unless-stopped
+    ports:
+      - "8082:80" # ✅ 唯一對外入口
+    depends_on:
+      - frontend
+      - backend
