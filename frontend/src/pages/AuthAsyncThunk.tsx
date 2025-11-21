@@ -8,6 +8,7 @@ import { RootState, AppDispatch } from "@/stores/store";
 import { useNavigate } from "react-router-dom";
 // import { toggleAuthMode } from "@/stores/features/authModeSlice";
 import { clearAuth } from "@/stores/features/rtkAsyncThunk/authSlice";
+import BaseButton from "@/components/BaseButton";
 
 export default function Auth() {
   const dispatch = useDispatch<AppDispatch>();
@@ -74,12 +75,21 @@ export default function Auth() {
   };
 
   return (
-    <div className="flex justify-center items-center h-screen bg-gray-100">
+    <div className="min-h-[100dvh] flex flex-col justify-center items-center">
+      <div className="mb-4 flex justify-center items-center space-x-4">
+        <img
+          className="w-12 mx-auto"
+          src="/fit-cycle-logo.png"
+          alt="fitCycle"
+        />
+        <h1 className="font-bold">FIT CYCLE</h1>
+      </div>
+
       <form
         onSubmit={handleSubmit}
-        className="bg-white p-6 rounded-xl shadow-md flex flex-col gap-4 w-[320px]"
+        className="p-6 rounded-xl shadow-md flex flex-col gap-4 w-[320px] dark:bg-primaryBlue"
       >
-        <div className="flex gap-2 justify-around border-b">
+        <div className="flex gap-2 justify-around">
           {/* <button
             type="button"
             onClick={() => dispatch(toggleAuthMode())}
@@ -114,36 +124,36 @@ export default function Auth() {
         <input
           value={username}
           onChange={(e) => setUsername(e.target.value)}
-          placeholder="帳號"
-          className="border p-2 rounded focus:ring focus:ring-blue-200"
+          placeholder="username"
+          className="border-b-2 p-2 rounded focus:ring focus:ring-blue-200 dark:bg-primaryBlue"
         />
         <input
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          placeholder="密碼"
+          placeholder="password"
           type="password"
-          className="border p-2 rounded focus:ring focus:ring-blue-200"
+          className="border-b-2 p-2 rounded focus:ring focus:ring-blue-200 dark:bg-primaryBlue"
         />
         {mode === "register" && (
           <input
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            placeholder="Email"
+            placeholder="documentElementail"
             type="email"
-            className="border p-2 rounded focus:ring focus:ring-green-200"
+            className="border-b-2 p-2 rounded focus:ring focus:ring-green-200 dark:bg-primaryBlue"
           />
         )}
 
-        <button
+        <BaseButton
           disabled={loading}
-          className={`text-white py-2 rounded ${
+          className={`text-white mt-4 py-2 rounded ${
             mode === "login"
               ? "bg-blue-500 hover:bg-blue-400"
               : "bg-green-500 hover:bg-green-400"
           }`}
         >
           {loading ? "處理中..." : mode === "login" ? "登入" : "註冊"}
-        </button>
+        </BaseButton>
 
         {(localError || error) && (
           <p className="text-red-500 text-center text-sm">

@@ -14,14 +14,18 @@ export default function ProtectedRoute({
   // const queryToken = useSelector((s: RootState) => s.authQuery.accessToken);
   // const thunkToken = useSelector((s: RootState) => s.authThunk.accessToken);
   // const token = queryToken || thunkToken;
-
-  // const user = useSelector((s: RootState) => s.authThunk.user);
-  const user = useAppSelector((state) => state.authThunk);
+  const user = useAppSelector((state) => state.authThunk.user);
 
   // console.log(
   //   "🧩 [STEP 4] ProtectedRoute 檢查 token:",
   //   token ? "存在 ✅" : "不存在 ❌"
   // );
   // return token ? children : <Navigate to="/auth" replace />;
-  return user ? children : <Navigate to="/auth" replace />;
+
+  // user 為 null / undefined / 沒 userId 時，一律視為未登入
+  if (!user || !user.userId) {
+    return <Navigate to="/auth" replace />;
+  }
+
+  return children;
 }

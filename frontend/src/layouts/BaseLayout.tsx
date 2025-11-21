@@ -40,7 +40,7 @@ const BaseLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   // };
 
   return (
-    <div className="p-4 w-full min-h-[100dvh] flex flex-col bg-secondary dark:bg-primary text-primary dark:text-secondary">
+    <div className="p-4 mx-auto max-w-6xl min-h-[100dvh] flex flex-col bg-secondary dark:bg-primary text-primary dark:text-secondary">
       <header className="sticky top-0 z-50 p-4 shadow flex justify-between items-center rounded-xl border border-slate-200 dark:border-slate-700 bg-secondary dark:bg-primary">
         <h1 className="text-xl font-bold">
           {user?.username}'s Daily Macro Tracker

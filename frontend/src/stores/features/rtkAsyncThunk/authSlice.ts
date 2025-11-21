@@ -56,6 +56,7 @@ const authSlice = createSlice({
       state.loading = false;
       state.success = null;
       state.error = null;
+      localStorage.removeItem("fc_user");
     },
   },
   extraReducers: (builder) => {
@@ -76,12 +77,22 @@ const authSlice = createSlice({
           return; // 重要！
         }
 
-        state.user = {
-          userId: action.payload.userId,
-          username: action.payload.username,
-          email: action.payload.email,
-        };
-        state.success = "LOGIN_OK";
+        if (action.payload.userId) {
+          const userData = {
+            userId: action.payload.userId,
+            username: action.payload.username,
+            email: action.payload.email,
+          };
+
+          state.user = userData;
+          state.success = "LOGIN_OK";
+
+          // ⭐ 存到 localStorage
+          localStorage.setItem("fc_user", JSON.stringify(userData));
+        } else {
+          state.error = JSON.stringify(action.payload);
+          state.user = null;
+        }
       })
       .addCase(loginAsync.rejected, (state, action) => {
         state.loading = false;

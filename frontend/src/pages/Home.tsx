@@ -98,7 +98,7 @@ export default function Home() {
 
   return (
     <div className="w-full h-full">
-      <div className="max-w-6xl mx-auto px-4 py-8 space-y-8">
+      <div className="max-w-6xl mx-auto py-8 space-y-8">
         {/* Form Card */}
         <section className="border border-slate-200 dark:border-slate-700 rounded-2xl p-6 shadow-lg shadow-primaryBlue/50">
           <h2 className="text-lg font-semibold mb-4">新增每日記錄</h2>

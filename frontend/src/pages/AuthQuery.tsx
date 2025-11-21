@@ -65,7 +65,7 @@ export default function Auth() {
   };
 
   return (
-    <div className="flex justify-center items-center h-screen bg-gradient-to-br from-blue-100 to-indigo-100">
+    <div className="flex justify-center items-center h-screen">
       <div className="bg-white p-8 rounded-2xl shadow-xl w-[340px]">
         {/* tab switch */}
         <div className="flex mb-6 border-b border-gray-200">
