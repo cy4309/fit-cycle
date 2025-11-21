@@ -5,23 +5,27 @@ import {
   // logoutAsync,
 } from "./authThunk";
 
+export interface UserProfile {
+  userId?: number | string;
+  username: string;
+  password?: string;
+  email: string;
+  height: number;
+  weight: number;
+  birth: string;
+}
+
 export interface AuthState {
-  user: {
-    userId?: string | number;
-    username: string;
-    email?: string;
-  } | null;
+  user: UserProfile | null;
   loading: boolean;
   success: string | null;
   error: string | null;
 }
 
+const savedUser = localStorage.getItem("fc_user");
+
 const initialState: AuthState = {
-  user: {
-    userId: 0,
-    username: "",
-    email: "",
-  },
+  user: savedUser ? JSON.parse(savedUser) : null,
   loading: false,
   success: null,
   error: null,
@@ -78,10 +82,13 @@ const authSlice = createSlice({
         }
 
         if (action.payload.userId) {
-          const userData = {
+          const userData: UserProfile = {
             userId: action.payload.userId,
             username: action.payload.username,
             email: action.payload.email,
+            height: action.payload.height,
+            weight: action.payload.weight,
+            birth: action.payload.birth,
           };
 
           state.user = userData;
@@ -120,12 +127,19 @@ const authSlice = createSlice({
           return;
         }
 
-        state.user = {
+        const userData: UserProfile = {
           userId: action.payload.userId,
           username: action.payload.username,
           email: action.payload.email,
+          height: action.payload.height,
+          weight: action.payload.weight,
+          birth: action.payload.birth,
         };
+
+        state.user = userData;
         state.success = "REGISTER_OK";
+
+        localStorage.setItem("fc_user", JSON.stringify(userData));
       });
     // .addCase(registerAsync.rejected, (state, action) => {
     //   state.loading = false;

@@ -42,26 +42,28 @@ const BaseLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   return (
     <div className="p-4 mx-auto max-w-6xl min-h-[100dvh] flex flex-col bg-secondary dark:bg-primary text-primary dark:text-secondary">
       <header className="sticky top-0 z-50 p-4 shadow flex justify-between items-center rounded-xl border border-slate-200 dark:border-slate-700 bg-secondary dark:bg-primary">
-        <h1 className="text-xl font-bold">
-          {user?.username}'s Daily Macro Tracker
-          <br />
-          {/* <p className="text-sm text-slate-400">紀錄每日運動與飲食。</p> */}
-          <p className="text-sm text-slate-400">
-            熱量: 低-1600~1700, 中-1800~2000, 高-2000~2100
-          </p>
-          <p className="text-sm text-slate-400">
-            碳水: 低-106.5, 中-177.5, 高-284
-          </p>
-          <p className="text-sm text-slate-400">
-            脂肪: 高-56.8, 中-35.5, 低-28.4
-          </p>
-          <p className="text-sm text-slate-400">蛋白質: 100~152</p>
-        </h1>
+        <div className="flex justify-center items-center space-x-4">
+          <img className="w-6 h-6" src="/fit-cycle-logo.png" alt="fitCycle" />
+          <h2 className="text-xl font-bold">
+            {user?.username}'s Daily Macro Tracker
+            {/* <br />
+            <p className="text-sm text-slate-400">
+              Carbs: 低-106.5, 中-177.5, 高-284
+            </p>
+            <p className="text-sm text-slate-400">
+              Fat: 高-56.8, 中-35.5, 低-28.4
+            </p>
+            <p className="text-sm text-slate-400">Protein: 100~152</p>
+            <p className="text-sm text-slate-400">
+              Calories: 低-1600~1700, 中-1800~2000, 高-2000~2100
+            </p> */}
+          </h2>
+        </div>
         <div className="flex justify-center items-center space-x-4">
           <ThemeButton />
           <BaseButton
             onClick={handleLogout}
-            className="px-2 py-2 transition font-bold bg-red-500 hover:!bg-red-400"
+            className="px-2 py-2 transition font-bold bg-decoratedRed hover:!bg-red-400"
           >
             <Power size={16} />
           </BaseButton>

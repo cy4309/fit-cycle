@@ -1,6 +1,7 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 // import axiosInstance from "@/services/rtkAsyncThunk/axiosInstance";
 import axios from "axios";
+import { UserProfile } from "./authSlice";
 
 const gasURL =
   "https://script.google.com/macros/s/AKfycbzjeh8Nj8NKH-uH3VLFYtanEIMjmX7DovMDQ6mmR6JMddIcu4LFORlQilGD2iJNyx34/exec";
@@ -32,10 +33,7 @@ export const loginAsync = createAsyncThunk(
 
 export const registerAsync = createAsyncThunk(
   "auth/register",
-  async (
-    payload: { username: string; password: string; email: string },
-    { rejectWithValue }
-  ) => {
+  async (payload: UserProfile, { rejectWithValue }) => {
     try {
       const res = await axios.post(
         `${gasURL}?action=register`,

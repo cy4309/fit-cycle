@@ -23,6 +23,10 @@ export default function Auth() {
   const [password, setPassword] = useState("");
   const [email, setEmail] = useState("");
   const [localError, setLocalError] = useState<string | null>(null);
+  const [height, setHeight] = useState("");
+  const [weight, setWeight] = useState("");
+  const [birth, setBirth] = useState("");
+
   // const rtkMode = useSelector((s: RootState) => s.authMode.mode);
 
   // ✅ 登入成功後導向首頁
@@ -68,7 +72,16 @@ export default function Auth() {
         setLocalError("Email 格式不正確");
         return;
       }
-      dispatch(registerAsync({ username, password, email }));
+      dispatch(
+        registerAsync({
+          username,
+          password,
+          email,
+          height: Number(height),
+          weight: Number(weight),
+          birth: birth,
+        })
+      );
     } else {
       dispatch(loginAsync({ username, password }));
     }
@@ -87,7 +100,7 @@ export default function Auth() {
 
       <form
         onSubmit={handleSubmit}
-        className="p-6 rounded-xl shadow-md flex flex-col gap-4 w-[320px] dark:bg-primaryBlue"
+        className="p-6 rounded-xl shadow-md flex flex-col gap-4 w-[320px] dark:bg-decoratedGray"
       >
         <div className="flex gap-2 justify-around">
           {/* <button
@@ -125,31 +138,54 @@ export default function Auth() {
           value={username}
           onChange={(e) => setUsername(e.target.value)}
           placeholder="username"
-          className="border-b-2 p-2 rounded focus:ring focus:ring-blue-200 dark:bg-primaryBlue"
+          className="border-b-2 p-2 rounded focus:ring focus:ring-blue-200 dark:bg-decoratedGray"
         />
         <input
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           placeholder="password"
           type="password"
-          className="border-b-2 p-2 rounded focus:ring focus:ring-blue-200 dark:bg-primaryBlue"
+          className="border-b-2 p-2 rounded focus:ring focus:ring-blue-200 dark:bg-decoratedGray"
         />
         {mode === "register" && (
-          <input
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="documentElementail"
-            type="email"
-            className="border-b-2 p-2 rounded focus:ring focus:ring-green-200 dark:bg-primaryBlue"
-          />
+          <>
+            <input
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="email"
+              type="email"
+              className="border-b-2 p-2 rounded focus:ring focus:ring-green-200 dark:bg-decoratedGray"
+            />
+            <input
+              value={height}
+              onChange={(e) => setHeight(e.target.value)}
+              placeholder="height"
+              type="text"
+              className="border-b-2 p-2 rounded focus:ring focus:ring-green-200 dark:bg-decoratedGray"
+            />
+            <input
+              value={weight}
+              onChange={(e) => setWeight(e.target.value)}
+              placeholder="weight"
+              type="text"
+              className="border-b-2 p-2 rounded focus:ring focus:ring-green-200 dark:bg-decoratedGray"
+            />
+            <input
+              value={birth}
+              onChange={(e) => setBirth(e.target.value)}
+              placeholder="birth"
+              type="date"
+              className="border-b-2 p-2 rounded focus:ring focus:ring-green-200 dark:bg-decoratedGray"
+            />
+          </>
         )}
 
         <BaseButton
           disabled={loading}
           className={`text-white mt-4 py-2 rounded ${
             mode === "login"
-              ? "bg-blue-500 hover:bg-blue-400"
-              : "bg-green-500 hover:bg-green-400"
+              ? "bg-blue-500 hover:!bg-blue-400"
+              : "bg-green-500 hover:!bg-green-400"
           }`}
         >
           {loading ? "處理中..." : mode === "login" ? "登入" : "註冊"}

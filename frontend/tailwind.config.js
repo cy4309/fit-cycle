@@ -7,7 +7,9 @@ module.exports = {
       colors: {
         primary: "#000",
         secondary: "#fff",
-        primaryBlue: "#0f172a", //bg-slate-900
+        decoratedGray: "#0f172a", //bg-slate-900
+        decoratedRed: "#ef4444", //bg-red-500
+        decoratedGreen: "#34d399", //bg-emerald-400
       },
     },
   },
