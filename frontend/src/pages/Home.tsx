@@ -313,14 +313,12 @@ export default function Home() {
             <div className="space-y-4">
               {/* ===== 標準 TDEE 區 ===== */}
               <h3 className="text-lg font-bold">標準 TDEE 建議</h3>
-
-              <div className="space-x-4 space-y-1 flex flex-wrap">
+              <div className="flex flex-col space-y-2">
                 {/* ===== 折疊公式 ===== */}
                 <button
                   onClick={() => setShowFormula(!showFormula)}
                   className="text-sm text-slate-400 transition flex items-center gap-1"
                 >
-                  {/* {showFormula ? "▲ 收合計算公式" : "▼ 展開計算公式"} */}
                   {showFormula ? (
                     <ChevronUp size={16} />
                   ) : (
