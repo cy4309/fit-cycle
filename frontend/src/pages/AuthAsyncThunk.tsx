@@ -171,12 +171,35 @@ export default function Auth() {
               type="text"
               className="border-b-2 p-2 rounded focus:ring focus:ring-green-200 dark:bg-decoratedGray"
             />
-            <input
+            {/* <input
               value={birth}
               onChange={(e) => setBirth(e.target.value)}
               placeholder="birth"
               type="date"
               className="border-b-2 p-2 rounded focus:ring focus:ring-green-200 dark:bg-decoratedGray"
+            /> */}
+            <input
+              type="text"
+              placeholder="birth(YYYY-MM-DD)"
+              value={birth}
+              onChange={(e) => setBirth(e.target.value)}
+              // onFocus={(e) => (e.target.type = "date")}
+              onBlur={(e) => {
+                if (!e.target.value) e.target.type = "text";
+              }}
+              className="
+                w-full
+                border-b-2
+                p-2
+                rounded
+                focus:ring focus:ring-green-200
+                bg-secondary
+                text-primary
+                placeholder-slate-400
+                dark:bg-decoratedGray
+                dark:text-slate-100
+                dark:placeholder-slate-400
+              "
             />
           </>
         )}
