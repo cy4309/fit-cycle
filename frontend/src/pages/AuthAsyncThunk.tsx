@@ -15,9 +15,7 @@ export default function Auth() {
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
   // const { loading, error } = useSelector((state: any) => state.auth);
-  const { loading, error, success, user } = useSelector(
-    (s: RootState) => s.authThunk
-  );
+  const { loading, success, user } = useSelector((s: RootState) => s.authThunk);
 
   const [mode, setMode] = useState<"login" | "register">("login");
   const [username, setUsername] = useState("");
