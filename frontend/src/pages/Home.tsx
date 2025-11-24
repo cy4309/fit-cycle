@@ -5,7 +5,13 @@ import {
   getRecords,
   createRecord,
 } from "@/stores/features/records/recordThunk";
-import { ArrowBigLeft, ArrowBigRight, Plus } from "lucide-react";
+import {
+  Plus,
+  ChevronUp,
+  ChevronDown,
+  ChevronLeft,
+  ChevronRight,
+} from "lucide-react";
 import { calculateMacroRules } from "@/utils/calcMacros";
 import {
   checkNumberWithTolerance,
@@ -26,10 +32,12 @@ export type Record = {
   goalStatus: string;
 };
 
-export default function Home() {
-  const [records, setRecords] = useState<Record[]>([]);
-  console.log(records);
+function getWeekday(dateStr: string) {
+  const d = new Date(dateStr);
+  return d.toLocaleDateString("en-US", { weekday: "short" }).toUpperCase();
+}
 
+export default function Home() {
   const today = new Date().toLocaleDateString("en-CA");
   const createDefaultForm = (): Record => ({
     date: today,
@@ -41,18 +49,17 @@ export default function Home() {
     calories: "",
     goalStatus: "",
   });
-
+  const [records, setRecords] = useState<Record[]>([]);
   const [form, setForm] = useState<Record>(createDefaultForm());
+  const [showFormula, setShowFormula] = useState(false); // 控制公式收合
+  const [showMacros, setShowMacros] = useState(false);
   const [page, setPage] = useState(1);
-  const pageSize = 10;
-
-  // 分頁
+  const pageSize = 7;
   const totalPages = Math.ceil(records.length / pageSize);
   const paginatedRecords = records.slice(
     (page - 1) * pageSize,
     page * pageSize
   );
-
   const { user } = useAppSelector((state) => state.authThunk);
   const macros = useMemo(() => {
     if (!user?.height || !user?.weight || !user?.birth) return null;
@@ -62,8 +69,6 @@ export default function Home() {
       user.birth
     );
   }, [user]);
-  const [showFormula, setShowFormula] = useState(false); // 控制公式收合
-  const [showMacros, setShowMacros] = useState(false);
 
   useEffect(() => {
     async function loadRecords() {
@@ -146,9 +151,11 @@ export default function Home() {
     }
 
     // ----------- 正式送出 -----------
+    const weekday = getWeekday(form.date);
     const payload = {
       userId: user!.userId,
       ...form,
+      date: `${form.date} | ${weekday}`, // <-- 存入 date + weekday
     };
 
     const res = await createRecord(payload);
@@ -190,7 +197,7 @@ export default function Home() {
                 <label className="block text-sm font-medium mb-1">Date</label>
                 <input
                   type="date"
-                  className="w-full rounded-lg border border-slate-700 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 dark:bg-decoratedGray"
+                  className="w-full rounded-lg border border-slate-700 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 dark:bg-decoratedGray appearance-none"
                   value={form.date}
                   onChange={(e) => handleChange("date", e.target.value)}
                 />
@@ -200,15 +207,21 @@ export default function Home() {
                 <label className="block text-sm font-medium mb-1">
                   Diet Type
                 </label>
-                <select
-                  className="w-full rounded-lg border border-slate-700 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 dark:bg-decoratedGray"
-                  value={form.dietType}
-                  onChange={(e) => handleChange("dietType", e.target.value)}
-                >
-                  <option value="低碳日">低碳日</option>
-                  <option value="中碳日">中碳日</option>
-                  <option value="高碳日">高碳日</option>
-                </select>
+                <div className="relative">
+                  <select
+                    className="w-full rounded-lg border border-slate-700 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 dark:bg-decoratedGray appearance-none"
+                    value={form.dietType}
+                    onChange={(e) => handleChange("dietType", e.target.value)}
+                  >
+                    <option value="低碳日">低碳日</option>
+                    <option value="中碳日">中碳日</option>
+                    <option value="高碳日">高碳日</option>
+                  </select>
+                  {/* 自訂箭頭 */}
+                  <div className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-slate-400">
+                    <ChevronDown size={16} />
+                  </div>
+                </div>
               </div>
             </div>
 
@@ -301,13 +314,19 @@ export default function Home() {
               {/* ===== 標準 TDEE 區 ===== */}
               <h3 className="text-lg font-bold">標準 TDEE 建議</h3>
 
-              <div className="space-x-4">
+              <div className="space-x-4 space-y-1 flex flex-wrap">
                 {/* ===== 折疊公式 ===== */}
                 <button
                   onClick={() => setShowFormula(!showFormula)}
-                  className="text-sm text-slate-400 underline transition"
+                  className="text-sm text-slate-400 transition flex items-center gap-1"
                 >
-                  {showFormula ? "▲ 收合計算公式" : "▼ 展開計算公式"}
+                  {/* {showFormula ? "▲ 收合計算公式" : "▼ 展開計算公式"} */}
+                  {showFormula ? (
+                    <ChevronUp size={16} />
+                  ) : (
+                    <ChevronDown size={16} />
+                  )}
+                  {showFormula ? "收合計算公式" : "展開計算公式"}
                 </button>
 
                 {showFormula && (
@@ -358,49 +377,54 @@ export default function Home() {
                 {/* ===== 折疊 Macros 顯示區 ===== */}
                 <button
                   onClick={() => setShowMacros(!showMacros)}
-                  className="text-sm text-slate-400 underline transition"
+                  className="text-sm text-slate-400 transition flex items-center gap-1"
                 >
-                  {showMacros ? "▲ 收合TDEE建議" : "▼ 展開TDEE建議"}
+                  {showMacros ? (
+                    <ChevronUp size={16} />
+                  ) : (
+                    <ChevronDown size={16} />
+                  )}
+                  {showMacros ? "收合TDEE建議" : "展開TDEE建議"}
                 </button>
+
+                {showMacros && (
+                  <div className="text-xs text-slate-400 space-y-1 leading-relaxed border border-slate-600 rounded-md p-3">
+                    {/* Carbs */}
+                    <p className="text-sm text-slate-400 font-medium">
+                      <span className="font-semibold">Carbs：</span>
+                      低-{Math.round(macros["低碳日"].carbs)}， 中-
+                      {Math.round(macros["中碳日"].carbs)}， 高-
+                      {Math.round(macros["高碳日"].carbs)}
+                    </p>
+
+                    {/* Fat */}
+                    <p className="text-sm text-slate-400 font-medium">
+                      <span className="font-semibold">Fat：</span>
+                      低-{Math.round(macros["低碳日"].fat)}， 中-
+                      {Math.round(macros["中碳日"].fat)}， 高-
+                      {Math.round(macros["高碳日"].fat)}
+                    </p>
+
+                    {/* Protein */}
+                    <p className="text-sm text-slate-400 font-medium">
+                      <span className="font-semibold">Protein：</span>
+                      {macros["低碳日"].protein.min} ~{" "}
+                      {macros["低碳日"].protein.max}
+                    </p>
+
+                    {/* Calories */}
+                    <p className="text-sm text-slate-400 font-medium">
+                      <span className="font-semibold">Calories：</span>
+                      低-{Math.round(macros["低碳日"].calories.min)}~
+                      {Math.round(macros["低碳日"].calories.max)}， 中-
+                      {Math.round(macros["中碳日"].calories.min)}~
+                      {Math.round(macros["中碳日"].calories.max)}， 高-
+                      {Math.round(macros["高碳日"].calories.min)}~
+                      {Math.round(macros["高碳日"].calories.max)}
+                    </p>
+                  </div>
+                )}
               </div>
-
-              {showMacros && (
-                <div className="space-y-2">
-                  {/* Carbs */}
-                  <p className="text-sm text-slate-400 font-medium">
-                    <span className="font-semibold">Carbs：</span>
-                    低-{Math.round(macros["低碳日"].carbs)}g， 中-
-                    {Math.round(macros["中碳日"].carbs)}g， 高-
-                    {Math.round(macros["高碳日"].carbs)}g
-                  </p>
-
-                  {/* Fat */}
-                  <p className="text-sm text-slate-400 font-medium">
-                    <span className="font-semibold">Fat：</span>
-                    低-{Math.round(macros["低碳日"].fat)}g， 中-
-                    {Math.round(macros["中碳日"].fat)}g， 高-
-                    {Math.round(macros["高碳日"].fat)}g
-                  </p>
-
-                  {/* Protein */}
-                  <p className="text-sm text-slate-400 font-medium">
-                    <span className="font-semibold">Protein：</span>
-                    {macros["低碳日"].protein.min} ~{" "}
-                    {macros["低碳日"].protein.max} g
-                  </p>
-
-                  {/* Calories */}
-                  <p className="text-sm text-slate-400 font-medium">
-                    <span className="font-semibold">Calories：</span>
-                    低-{Math.round(macros["低碳日"].calories.min)}~
-                    {Math.round(macros["低碳日"].calories.max)} kcal， 中-
-                    {Math.round(macros["中碳日"].calories.min)}~
-                    {Math.round(macros["中碳日"].calories.max)} kcal， 高-
-                    {Math.round(macros["高碳日"].calories.min)}~
-                    {Math.round(macros["高碳日"].calories.max)} kcal
-                  </p>
-                </div>
-              )}
             </div>
           )}
         </section>
@@ -454,7 +478,7 @@ export default function Home() {
 
                   const color = {
                     ok: "text-decoratedGreen",
-                    low: "text-decoratedRed",
+                    low: "text-orange-400",
                     high: "text-decoratedRed",
                   };
 
@@ -521,7 +545,7 @@ export default function Home() {
 
                 const color = {
                   ok: "text-decoratedGreen",
-                  low: "text-decoratedRed",
+                  low: "text-orange-400",
                   high: "text-decoratedRed",
                 };
 
@@ -580,7 +604,7 @@ export default function Home() {
                 onClick={() => setPage((p) => p - 1)}
                 className="px-3 py-1 bg-gray-200 disabled:opacity-50 text-primary"
               >
-                <ArrowBigLeft size={16} />
+                <ChevronLeft size={16} />
               </BaseButton>
 
               <span className="text-sm">
@@ -592,7 +616,7 @@ export default function Home() {
                 onClick={() => setPage((p) => p + 1)}
                 className="px-3 py-1 bg-gray-200 disabled:opacity-50 text-primary"
               >
-                <ArrowBigRight size={16} />
+                <ChevronRight size={16} />
               </BaseButton>
             </div>
           </div>

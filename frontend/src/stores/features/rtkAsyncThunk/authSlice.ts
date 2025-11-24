@@ -4,6 +4,7 @@ import {
   registerAsync,
   // logoutAsync,
 } from "./authThunk";
+import Swal from "sweetalert2";
 
 export interface UserProfile {
   userId?: number | string;
@@ -78,6 +79,13 @@ const authSlice = createSlice({
           state.user = null;
           state.success = null;
           state.error = action.payload.error;
+
+          Swal.fire({
+            icon: "error",
+            title: "登入失敗",
+            text: action.payload.error,
+            confirmButtonColor: "#ef4444",
+          });
           return; // 重要！
         }
 
@@ -124,6 +132,13 @@ const authSlice = createSlice({
           state.user = null;
           state.success = null;
           state.error = action.payload.error;
+
+          Swal.fire({
+            icon: "error",
+            title: "註冊失敗",
+            text: action.payload.error,
+            confirmButtonColor: "#ef4444",
+          });
           return;
         }
 

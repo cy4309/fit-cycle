@@ -9,6 +9,7 @@ import { useNavigate } from "react-router-dom";
 // import { toggleAuthMode } from "@/stores/features/authModeSlice";
 import { clearAuth } from "@/stores/features/rtkAsyncThunk/authSlice";
 import BaseButton from "@/components/BaseButton";
+import Swal from "sweetalert2";
 
 export default function Auth() {
   const dispatch = useDispatch<AppDispatch>();
@@ -22,11 +23,9 @@ export default function Auth() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [email, setEmail] = useState("");
-  const [localError, setLocalError] = useState<string | null>(null);
   const [height, setHeight] = useState("");
   const [weight, setWeight] = useState("");
   const [birth, setBirth] = useState("");
-  console.log(birth);
 
   // const rtkMode = useSelector((s: RootState) => s.authMode.mode);
 
@@ -43,7 +42,6 @@ export default function Auth() {
   useEffect(() => {
     if (success === "REGISTER_OK") {
       setMode("login");
-      setLocalError(null);
       dispatch(clearAuth());
     }
   }, [success, dispatch]);
@@ -51,7 +49,6 @@ export default function Auth() {
   // 切換 login / register tab → 清除錯誤與 success
   const handleSwitchMode = (m: "login" | "register") => {
     setMode(m);
-    setLocalError(null);
     dispatch(clearAuth());
   };
 
@@ -59,20 +56,74 @@ export default function Auth() {
   const isValidEmail = (email: string) =>
     /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
+  // 生日格式驗證：YYYY-MM-DD 且為合法日期
+  const isValidBirth = (birth: string) => {
+    const regex = /^\d{4}-\d{2}-\d{2}$/;
+    if (!regex.test(birth)) return false;
+
+    const d = new Date(birth);
+    // 無效日期會變成 Invalid Date
+    if (Number.isNaN(d.getTime())) return false;
+
+    // 再反向組裝一次比對，避免 2025-13-40 之類被 JS 自動進位
+    const [y, m, day] = birth.split("-").map(Number);
+    return (
+      d.getFullYear() === y && d.getMonth() + 1 === m && d.getDate() === day
+    );
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    setLocalError(null);
     dispatch(clearAuth());
 
+    // ------- Register 模式 -------
     if (mode === "register") {
-      if (!email) {
-        setLocalError("請輸入 Email");
-        return;
+      if (!email.trim()) {
+        return Swal.fire({
+          icon: "error",
+          title: "請輸入 Email",
+          confirmButtonColor: "#ef4444",
+        });
       }
       if (!isValidEmail(email)) {
-        setLocalError("Email 格式不正確");
-        return;
+        return Swal.fire({
+          icon: "error",
+          title: "Email 格式不正確",
+          confirmButtonColor: "#ef4444",
+        });
       }
+      if (!height || Number(height) <= 0) {
+        return Swal.fire({
+          icon: "error",
+          title: "請輸入正確的身高",
+          confirmButtonColor: "#ef4444",
+        });
+      }
+      if (!weight || Number(weight) <= 0) {
+        return Swal.fire({
+          icon: "error",
+          title: "請輸入正確的體重",
+          confirmButtonColor: "#ef4444",
+        });
+      }
+      if (!birth.trim()) {
+        return Swal.fire({
+          icon: "error",
+          title: "請選擇生日",
+          confirmButtonColor: "#ef4444",
+        });
+      }
+      // 生日格式 YYYY-MM-DD 檢查
+      if (!isValidBirth(birth)) {
+        return Swal.fire({
+          icon: "error",
+          title: "生日格式不正確",
+          text: "請使用 YYYY-MM-DD",
+          confirmButtonColor: "#ef4444",
+        });
+      }
+
+      // ------- 全部 OK → 送出註冊 -------
       dispatch(
         registerAsync({
           username,
@@ -80,12 +131,14 @@ export default function Auth() {
           email,
           height: Number(height),
           weight: Number(weight),
-          birth: birth,
+          birth,
         })
       );
-    } else {
-      dispatch(loginAsync({ username, password }));
+      return;
     }
+
+    // ------- Login 模式 -------
+    dispatch(loginAsync({ username, password }));
   };
 
   return (
@@ -214,12 +267,6 @@ export default function Auth() {
         >
           {loading ? "處理中..." : mode === "login" ? "登入" : "註冊"}
         </BaseButton>
-
-        {(localError || error) && (
-          <p className="text-red-500 text-center text-sm">
-            {localError || error}
-          </p>
-        )}
 
         {success && (
           <p className="text-green-600 text-center text-sm">{success}</p>
