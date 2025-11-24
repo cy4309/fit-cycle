@@ -30,7 +30,7 @@ export default function Home() {
   const [records, setRecords] = useState<Record[]>([]);
   console.log(records);
 
-  const today = new Date().toISOString().split("T")[0];
+  const today = new Date().toLocaleDateString("en-CA");
   const createDefaultForm = (): Record => ({
     date: today,
     workoutPlan: "",

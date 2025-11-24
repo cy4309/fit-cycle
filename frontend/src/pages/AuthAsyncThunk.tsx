@@ -26,6 +26,7 @@ export default function Auth() {
   const [height, setHeight] = useState("");
   const [weight, setWeight] = useState("");
   const [birth, setBirth] = useState("");
+  console.log(birth);
 
   // const rtkMode = useSelector((s: RootState) => s.authMode.mode);
 
